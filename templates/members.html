@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registered Members</title>
+</head>
+<body>
+    <h2>Registered Members</h2>
+
+    {% if members %}
+        <ul>
+            {% for member in members %}
+                <li>{{ member.name }} - {{ member.email }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No members registered yet.</p>
+    {% endif %}
+
+    <p><a href="{{ url_for('index') }}">Back to Home</a></p>
+</body>
+</html>
