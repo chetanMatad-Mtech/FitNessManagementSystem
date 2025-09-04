@@ -1,47 +1,89 @@
-FitNess Management System – Testing Guide
+ACEestFitness and Gym – Flask Web Application
+=============================================
 
-This document explains how to update and run the unit tests defined in
-test_application.py.
-The tests are executed both locally and automatically in the CI/CD
-pipeline.
-
+This project is a Flask-based fitness tracker web application with unit tests.
+It allows users to log workouts and view them directly in the browser.
+The application was adapted from a desktop Tkinter version to a Flask web app.
 NOTE: MASTER Branch is used for deployment 
-------------------------------------------------------------------------
--   application.py contains a basic python based brouser using Flask
-    index.html contains title body and 2 url pages
-    members.html and register.html
-    members.html holds the objects for each of them 
-    register.html gives pages to register
--   test_application.py – Contains Pytest-based unit tests for
-    validating the core functionality of the Flask fitness management
-    application.
 
-------------------------------------------------------------------------
 
-Running Tests Locally
+Project Structure
+-----------------
+D:\DevOps\GMY_APP\
+│
+├── Application.py        -> Main Flask application
+├── test_application.py   -> Unit tests using pytest
+├── requirements.txt      -> Python dependencies
+├── Dockerfile            -> Docker build file
+└── readme.txt            -> Project documentation
 
-1. Install dependencies
-    pip install -r requirements.txt
 
-2. Run application
-   python application.py
-   This opens the webbased in loop back address of http://127.0.0.1:5000
 
-3. Run py test
-    pytest -v
+Features
+--------
+- Add a workout with a name and duration (in minutes).
+- View all logged workouts on the homepage.
+- Validation ensures only numeric durations are accepted.
+- Includes test cases for endpoints and validation.
 
-4. Run a specific test
-    pytest -v test_application.py::test_example_feature
 
-5.  Build the Docker image:
-	This was tried in linux machine to use as 2 user 
-        docker build -t aceest-fitness-app .
-        If you face network bridge issue 
-        sudo docker build --network=host -t aceest-fitness-app .
+Setup Instructions
+------------------
+1. Create and activate a virtual environment:
 
-6.  Run tests inside the container:
-        docker run --rm aceest-fitness-app pytest -v
+   python -m venv venv
+   venv\Scripts\activate     (On Windows)
 
+2. Install dependencies:
+   pip install -r requirements.txt
+
+
+Running the Application
+-----------------------
+Start the Flask server:
+   python Application.py
+
+Open the app in your browser:
+   http://127.0.0.1:5000/
+
+
+Running Tests
+-------------
+Run the test suite with:
+   pytest -v test_application.py
+
+The tests cover:
+- Homepage loading.
+- Adding a workout.
+- Validation for invalid durations.
+- Multiple workout entries.
+
+Running with Docker
+-------------------
+1. Build the Docker image:
+   docker build -t fitness-app .
+
+2. Run the container:
+   docker run -p 5000:5000 fitness-app
+
+3. Open the app in your browser:
+   http://127.0.0.1:5000/
+
+Example Usage
+-------------
+1. Open the app in a browser.
+2. Enter a workout name (e.g., Pushups).
+3. Enter duration (e.g., 15).
+4. Click "Add Workout".
+5. See logged workouts appear in the list.
+
+
+Future Enhancements
+-------------------
+- Store workouts in an SQLite database instead of in-memory.
+- Add user accounts for personalized tracking.
+- Provide analytics and charts for workout progress.
+- Deploy the app using Docker or cloud hosting.
 ------------------------------------------------------------------------
 
 -   Tests in test_application.py are executed automatically on every
