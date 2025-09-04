@@ -1,36 +1,40 @@
 import pytest
-from Application import app
+from Application import app  # replace with your Flask file name
 
 @pytest.fixture
 def client():
-    app.config['TESTING'] = True
+    app.config["TESTING"] = True
     with app.test_client() as client:
         yield client
 
-def test_home_route(client):
-    response = client.get('/')
+def test_home_page(client):
+    """Check if home page loads correctly"""
+    response = client.get("/")
     assert response.status_code == 200
-    # Check that home page loads some expected text (adjust to match index.html)
-    assert b'Welcome' in response.data or b'Index' in response.data
+    assert b"ACEestFitness and Gym" in response.data
+    assert b"No workouts logged yet." in response.data
 
-def test_register_get(client):
-    response = client.get('/register')
+def test_add_workout(client):
+    """Add a workout and check if it appears"""
+    response = client.post("/add", data={"workout": "Arms", "duration": "15"}, follow_redirects=True)
     assert response.status_code == 200
-    assert b'Register' in response.data
+    assert b"Arms" in response.data
+    assert b"15 minutes" in response.data
 
-def test_register_post_valid(client):
-    response = client.post('/register', data={'name': 'Chetan', 'email': 'Chetan@gmail.com'}, follow_redirects=True)
+def test_invalid_duration(client):
+    """Try to add workout with invalid duration (non-numeric)"""
+    response = client.post("/add", data={"workout": "ThreadMill", "duration": "abc"}, follow_redirects=True)
+    # Should not add invalid workout
     assert response.status_code == 200
-    assert b'Chetan' in response.data
-    assert b'Chetan@gmail.com' in response.data
+    assert b"Running - abc minutes" not in response.data
 
-def test_register_post_invalid(client):
-    response = client.post('/register', data={'name': '', 'email': ''})
-    assert response.status_code == 200
-    assert b'Please Enter name and email.' in response.data
-
-def test_list_members(client):
-    # Ensure members page loads
-    response = client.get('/members')
-    assert response.status_code == 200
-    assert b'Members' in response.data
+def test_multiple_workouts(client):
+    """Add multiple workouts and verify list"""
+    client.post("/add", data={"workout": "Pushup", "duration": "20"}, follow_redirects=True)
+    client.post("/add", data={"workout": "Plank", "duration": "5"}, follow_redirects=True)
+    
+    response = client.get("/")
+    assert b"Pushup" in response.data
+    assert b"20 minutes" in response.data
+    assert b"Plank" in response.data
+    assert b"5 minutes" in response.data
