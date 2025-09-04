@@ -1,0 +1,24 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-test:
+    runs-on: windows-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Build Docker image
+      - name: Build Docker image
+        run: docker build -t aceest-fitness-app .
+
+      # Step 3: Run Pytest inside Docker container
+      - name: Run unit tests inside container
+        run: docker run --rm aceest-fitness-app pytest -v
