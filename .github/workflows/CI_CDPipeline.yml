@@ -1,0 +1,38 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Build Docker image
+      - name: Build Docker image
+        run: docker build -t aceest-fitness-app .
+
+      # Step 3: Run Pytest inside Docker container
+      - name: Run unit tests inside container
+        run: docker run --rm aceest-fitness-app pytest -v
+
+  test:
+    name: Run Pytest inside Docker
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image for testing
+        run: docker build -t aceest-fitness-app .
+
+      - name: Run tests with pytest
+        run: docker run --rm aceest-fitness-app pytest -v
